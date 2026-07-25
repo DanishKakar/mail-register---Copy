@@ -24,7 +24,7 @@ function yn(int $v): string { return $v ? '<span class="badge badge-yes">هو</s
 
 <div class="card">
     <div class="form-grid">
-        <div><label>مسلسل او مشترک لمبر</label><div><?= e($r['serial_no']) ?></div></div>
+        <div><label>مسلسل او مشترک نمبر</label><div><?= e($r['serial_no']) ?></div></div>
         <div><label>دوسیه نمبر</label><div><?= e($r['dossier_no']) ?: '—' ?></div></div>
         <div><label>رسیداتو نمبر</label><div><?= e($r['receipts_no']) ?: '—' ?></div></div>
         <div><label>نیټه (د صدور)</label><div><?= e($r['issue_date']) ?></div></div>

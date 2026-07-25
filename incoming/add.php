@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($f as $key => $default) { $f[$key] = trim($_POST[$key] ?? ''); }
 
     if ($f['serial_no'] === '') {
-        $errors[] = 'د مسلسل لمبر ډکول لازمي دي.';
+        $errors[] = 'د مسلسل نمبر ډکول لازمي دي.';
     }
 
     if (!$errors) {

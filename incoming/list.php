@@ -51,7 +51,7 @@ require __DIR__ . '/../includes/header.php';
 
 <form method="get" class="card filter-bar">
     <div class="field">
-        <label>لټون (سریال، لیږونکی، موضوع، وارده لمبر، مبداء)</label>
+        <label>لټون (سریال، لیږونکی، موضوع، وارده نمبر، مبداء)</label>
         <input type="text" name="q" value="<?= e($q) ?>" placeholder="لټون...">
     </div>
     <div class="field">

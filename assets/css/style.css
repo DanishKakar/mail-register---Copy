@@ -36,6 +36,10 @@ a:hover { text-decoration: underline; }
 /* ---------------- Topbar ---------------- */
 .topbar {
     background: var(--primary);
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    
     color: #fff;
     display: flex;
     align-items: center;
@@ -193,6 +197,7 @@ table.data-table td.subject-cell { white-space: normal; min-width: 220px; }
     padding: 7px 13px; border-radius: 6px; border: 1px solid var(--border); background: #fff; font-size: .88rem;
 }
 .pagination .current { background: var(--primary); color: #fff; border-color: var(--primary); }
+
 
 .hidden-field { display: none; }
 .text-muted { color: var(--muted); font-size: .85rem; }

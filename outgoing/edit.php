@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($f['serial_no'] === '') {
-        $errors[] = 'د مسلسل لمبر ډکول لازمي دي.';
+        $errors[] = 'د مسلسل نمبر ډکول لازمي دي.';
     }
 
     if (!$errors) {

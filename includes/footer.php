@@ -1,6 +1,6 @@
 </main>
 <footer class="app-footer">
-    <p>د دینی جامعاتو او تخصصاتو ریاست &ndash; د ډیتابس امریت &copy; <?= date('Y') ?></p>
+    <p>د دینی جامعاتو او تخصصاتو ریاست &ndash; د معلوماتی ټکنالوژی امریت &copy; <?= date('Y') ?></p>
 </footer>
 <script src="<?= BASE_URL ?>assets/js/attachment-toggle.js"></script>
 <script>

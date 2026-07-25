@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="login-brand">
             <div class="login-logo">📖</div>
             <h1><?= e(APP_NAME) ?></h1>
-            <p class="subtitle">د ډیتابس امریت</p>
+            <p class="subtitle">د معلوماتی ټکنالوژی امریت</p>
         </div>
 
         <?php if ($timeout): ?>
@@ -99,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="password">پټنوم</label>
             <input type="password" id="password" name="password" required>
-
+            <div class="password-hint">پټنوم باید لږ تر لږه ۸ کرکټرونه ولري.</div><br>
             <button type="submit" class="btn btn-primary btn-block">ننوتل</button>
         </form>
-        <p class="login-footer">Database Directorate &copy; <?= date('Y') ?></p>
+        <p class="login-footer">IT Directorate &copy; <?= date('Y') ?></p>
     </div>
 </body>
 </html>

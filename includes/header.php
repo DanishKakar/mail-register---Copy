@@ -10,6 +10,9 @@ $activePage = $activePage ?? '';
 <title><?= e($pageTitle ?? APP_NAME) ?></title>
 <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+
 </head>
 
 
@@ -20,6 +23,7 @@ $activePage = $activePage ?? '';
         <a href="<?= BASE_URL ?>index.php" class="<?= $activePage === 'dashboard' ? 'active' : '' ?>">کورپاڼه</a>
         <a href="<?= BASE_URL ?>outgoing/list.php" class="<?= $activePage === 'outgoing' ? 'active' : '' ?>">صادره مکتوبونه</a>
         <a href="<?= BASE_URL ?>incoming/list.php" class="<?= $activePage === 'incoming' ? 'active' : '' ?>">وارده مکتوبونه</a>
+        <a href="<?= BASE_URL ?>departments/list.php" class="<?= $activePage === 'departments' ? 'active' : '' ?>">ادارات</a>
         <?php if ($currentUser['role'] === 'admin'): ?>
             <a href="<?= BASE_URL ?>users.php" class="<?= $activePage === 'users' ? 'active' : '' ?>">کاروونکي</a>
         <?php endif; ?>

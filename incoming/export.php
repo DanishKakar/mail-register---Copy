@@ -16,8 +16,8 @@ $where  = [];
 $params = [];
 
 if ($q !== '') {
-    $where[] = '(serial_no LIKE :q OR sent_from LIKE :q2 OR subject LIKE :q3 OR incoming_no LIKE :q4 OR origin LIKE :q5)';
-    $params['q'] = $params['q2'] = $params['q3'] = $params['q4'] = $params['q5'] = "%$q%";
+    $where[] = '(incoming_letters.serial_no LIKE :q OR incoming_letters.subject LIKE :q2 OR incoming_letters.incoming_no LIKE :q3 OR incoming_letters.dossier_no LIKE :q4 OR sent_dep.name LIKE :q5 OR origin_dep.name LIKE :q6)';
+    $params['q'] = $params['q2'] = $params['q3'] = $params['q4'] = $params['q5'] = $params['q6'] = "%$q%";
 }
 
 if ($from !== '') {
@@ -33,7 +33,12 @@ if ($to !== '') {
 $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
 $stmt = db()->prepare(
-    "SELECT * FROM incoming_letters $whereSql ORDER BY id ASC"
+    "SELECT incoming_letters.*, sent_dep.name AS sent_to_department, origin_dep.name AS origin_department
+     FROM incoming_letters
+     LEFT JOIN departments AS sent_dep ON sent_dep.id = incoming_letters.sent_to_dep_id
+     LEFT JOIN departments AS origin_dep ON origin_dep.id = incoming_letters.origin_dep_id
+     $whereSql
+     ORDER BY incoming_letters.id ASC"
 );
 
 $stmt->execute($params);
@@ -81,17 +86,12 @@ foreach ($rows as $r) {
         $r['action_no'] ?? '',
         $r['letter_date'] ?? '',
         $r['incoming_no'] ?? '',
-        $r['sent_from'] ?? '',
-        $r['origin'] ?? '',
+        $r['sent_to_department'] ?? '',
+        $r['origin_department'] ?? '',
         $r['subject'] ?? '',
         $r['dossier_no'] ?? '',
         $r['doc_count'] ?? '',
         $r['pages_no'] ?? '',
-
-        // د ثبت شعبه معلومات
-        !empty($r['attachment_signed']) ? 'هو' : 'نه',
-        !empty($r['attachment']) ? 'هو' : 'نه',
-        $r['attachment_count'] ?? '',
 
         $r['remarks'] ?? ''
 

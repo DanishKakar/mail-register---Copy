@@ -12,9 +12,10 @@ $pageTitle  = 'نوی صادره ثبت - ' . APP_NAME;
 $errors = [];
 $f = [
     'serial_no' => '', 'receipts_no' => '', 'issue_date' => '', 'letter_date' => '', 'sent_to' => '', 'dossier_no' => '',
-    'reference_no' => '', 'subject' => '', 'distribution_notes' => '', 'remarks' => '',
+    'subject' => '', 'distribution_notes' => '', 'remarks' => '',
     'records_signature' => 0, 'records_attachment' => 0, 'records_original' => 0, 'records_attachment_pages' => '',
     'exec_signature' => 0,  'exec_attachment_pages' => '', 'exec_attachment' => 0, 'exec_original' => 0,
+    'sent_to_dep_id' => 0, 'reference_dep_id' => 0
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,21 +45,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$errors) {
         $stmt = db()->prepare(
             'INSERT INTO outgoing_letters
-             (serial_no, receipts_no, issue_date, letter_date, sent_to, dossier_no, reference_no, subject,
+             (serial_no, receipts_no, issue_date, letter_date, sent_to_dep_id,
+            reference_dep_id, dossier_no, subject,
               records_signature, records_attachment, records_original,
               exec_signature, exec_attachment, exec_original,records_attachment_pages, exec_attachment_pages,
               distribution_notes, remarks, created_by)
              VALUES
-             (:serial_no, :receipts_no, :issue_date, :letter_date, :sent_to, :dossier_no, :reference_no, :subject,
+             (:serial_no, :receipts_no, :issue_date, :letter_date,  :sent_to_dep_id, :reference_dep_id, :dossier_no, :subject,
               :records_signature, :records_attachment, :records_original,
               :exec_signature, :exec_attachment, :exec_original, :records_attachment_pages, :exec_attachment_pages,
               :distribution_notes, :remarks, :created_by)'
         );
-        $stmt->execute([...$f, 'created_by' => $currentUser['id']]);
+        $stmt->execute([
+            'serial_no' => $f['serial_no'],
+            'receipts_no' => $f['receipts_no'],
+            'issue_date' => $f['issue_date'],
+            'letter_date' => $f['letter_date'],
+            'sent_to_dep_id' => $f['sent_to_dep_id'],
+            'reference_dep_id' => $f['reference_dep_id'],
+            'dossier_no' => $f['dossier_no'],
+            'subject' => $f['subject'],
+            'records_signature' => $f['records_signature'],
+            'records_attachment' => $f['records_attachment'],
+            'records_original' => $f['records_original'],
+            'exec_signature' => $f['exec_signature'],
+            'exec_attachment' => $f['exec_attachment'],
+            'exec_original' => $f['exec_original'],
+            'records_attachment_pages' => $f['records_attachment_pages'],
+            'exec_attachment_pages' => $f['exec_attachment_pages'],
+            'distribution_notes' => $f['distribution_notes'],
+            'remarks' => $f['remarks'],
+            'created_by' => $currentUser['id'],
+        ]);
         flash_set('success', 'د صادره مکتوب په بریالیتوب سره ثبت شو.');
         redirect('list.php');
     }
 }
+
+// select departments for the dropdown
+$departments = db()
+    ->query("SELECT id, name FROM departments ORDER BY name ASC")
+    ->fetchAll(PDO::FETCH_ASSOC);
+
 
 require __DIR__ . '/../includes/header.php';
 ?>
@@ -82,8 +110,35 @@ require __DIR__ . '/../includes/header.php';
             <label>رسیداتو نمبر</label>
             <input type="text" name="receipts_no" value="<?= e($f['receipts_no']) ?>">
         </div>
-        <div><label>مرسل الیه (لیږل شوی چاته)</label><input type="text" name="sent_to" value="<?= e($f['sent_to']) ?>"></div>
-        <div><label>مرجع</label><input type="text" name="reference_no" value="<?= e($f['reference_no']) ?>"></div>
+        <div class="field">
+            <label>مرسل الیه (لیږل شوی چاته)</label>
+            <select name="sent_to_dep_id" class="form-control searchable-select">
+
+                <option value="">
+                -- انتخاب ریاست --
+                </option>
+                <?php foreach($departments as $dep): ?>
+                    <option value="<?= $dep['id'] ?>">
+                        <?= e($dep['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>مرجع</label>
+            <select name="reference_dep_id" class="form-control searchable-select">
+                <option value="">
+                -- انتخاب ریاست --
+                </option>
+                <?php foreach($departments as $dep): ?>
+                    <option value="<?= $dep['id'] ?>">
+                        <?= e($dep['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
     </div>
 
     <label>د مطلب خلاصه (موضوع)</label>

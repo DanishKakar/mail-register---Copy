@@ -16,12 +16,44 @@ if (!$record) { flash_set('error', 'ریکارډ ونه موندل شو.'); redi
 $activePage = 'incoming';
 $pageTitle  = 'د وارده سمون - ' . APP_NAME;
 $errors = [];
-$fields = ['serial_no','incoming_date','letter_date','incoming_no', 'dossier_no', 'sent_from','origin','subject','doc_count','pages_no','action_no','remarks'];
-$f = $record;
+$departments = db()->query('SELECT id, name FROM departments ORDER BY name')->fetchAll(PDO::FETCH_ASSOC);
+$defaults = [
+    'serial_no' => '', 'incoming_date' => '', 'letter_date' => '', 'incoming_no' => '', 'dossier_no' => '',
+    'sent_from' => '', 'origin' => '', 'subject' => '', 'doc_count' => '',
+    'pages_no' => '', 'action_no' => '', 'remarks' => '',
+    'sent_to_dep_id' => null, 'origin_dep_id' => null,
+];
+$f = array_merge($defaults, $record);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
-    foreach ($fields as $key) { $f[$key] = trim($_POST[$key] ?? ''); }
+
+    $f['serial_no'] = trim($_POST['serial_no'] ?? '');
+    $f['incoming_date'] = trim($_POST['incoming_date'] ?? '');
+    $f['letter_date'] = trim($_POST['letter_date'] ?? '');
+    $f['incoming_no'] = trim($_POST['incoming_no'] ?? '');
+    $f['dossier_no'] = trim($_POST['dossier_no'] ?? '');
+    $f['subject'] = trim($_POST['subject'] ?? '');
+    $f['doc_count'] = trim($_POST['doc_count'] ?? '');
+    $f['pages_no'] = trim($_POST['pages_no'] ?? '');
+    $f['action_no'] = trim($_POST['action_no'] ?? '');
+    $f['remarks'] = trim($_POST['remarks'] ?? '');
+    $f['sent_to_dep_id'] = !empty($_POST['sent_to_dep_id']) ? (int)$_POST['sent_to_dep_id'] : null;
+    $f['origin_dep_id'] = !empty($_POST['origin_dep_id']) ? (int)$_POST['origin_dep_id'] : null;
+
+    $sentToName = '';
+    $originName = '';
+    foreach ($departments as $dep) {
+        if ((int)$dep['id'] === (int)$f['sent_to_dep_id']) {
+            $sentToName = $dep['name'];
+        }
+        if ((int)$dep['id'] === (int)$f['origin_dep_id']) {
+            $originName = $dep['name'];
+        }
+    }
+
+    $f['sent_from'] = $sentToName;
+    $f['origin'] = $originName;
 
     if ($f['serial_no'] === '') {
         $errors[] = 'د مسلسل نمبر ډکول لازمي دي.';
@@ -31,13 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = db()->prepare(
             'UPDATE incoming_letters SET
              serial_no = :serial_no, incoming_date = :incoming_date, letter_date = :letter_date,
-             incoming_no = :incoming_no, dossier_no = :dossier_no, sent_from = :sent_from, origin = :origin, subject = :subject,
+             incoming_no = :incoming_no, dossier_no = :dossier_no, sent_to_dep_id = :sent_to_dep_id, origin_dep_id = :origin_dep_id,
+             sent_from = :sent_from, origin = :origin, subject = :subject,
              doc_count = :doc_count, pages_no = :pages_no, action_no = :action_no, remarks = :remarks
              WHERE id = :id'
         );
         $stmt->execute([
             'serial_no' => $f['serial_no'], 'incoming_date' => $f['incoming_date'], 'letter_date' => $f['letter_date'],
-            'incoming_no' => $f['incoming_no'], 'dossier_no' => $f['dossier_no'], 'sent_from' => $f['sent_from'], 'origin' => $f['origin'],
+            'incoming_no' => $f['incoming_no'], 'dossier_no' => $f['dossier_no'], 'sent_to_dep_id' => $f['sent_to_dep_id'], 'origin_dep_id' => $f['origin_dep_id'],
+            'sent_from' => $f['sent_from'], 'origin' => $f['origin'],
             'subject' => $f['subject'], 'doc_count' => $f['doc_count'] !== '' ? (int)$f['doc_count'] : null,
             'pages_no' => $f['pages_no'], 'action_no' => $f['action_no'], 'remarks' => $f['remarks'],
             'id' => $id,
@@ -62,8 +96,24 @@ require __DIR__ . '/../includes/header.php';
         <div><label>نیټه (د ثبت)</label><input type="text" name="incoming_date" value="<?= e($f['incoming_date']) ?>"></div>
         <div><label>نیټه (د مکتوب)</label><input type="text" name="letter_date" value="<?= e($f['letter_date']) ?>"></div>
         <div><label>د وارده مکتوب نمبر</label><input type="text" name="incoming_no" value="<?= e($f['incoming_no']) ?>"></div>
-        <div><label>مرسله الیه (لیږونکی)</label><input type="text" name="sent_from" value="<?= e($f['sent_from']) ?>"></div>
-        <div><label>مبداء</label><input type="text" name="origin" value="<?= e($f['origin']) ?>"></div>
+        <div>
+            <label>مرسله الیه (ریاست)</label>
+            <select name="sent_to_dep_id" class="form-control searchable-select">
+                <option value="">-- انتخاب ریاست --</option>
+                <?php foreach ($departments as $dep): ?>
+                    <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['sent_to_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label>مبداء (ریاست)</label>
+            <select name="origin_dep_id" class="form-control searchable-select">
+                <option value="">-- انتخاب ریاست --</option>
+                <?php foreach ($departments as $dep): ?>
+                    <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['origin_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <div><label>عدد</label><input type="number" name="doc_count" value="<?= e((string)$f['doc_count']) ?>"></div>
         <div><label>د اوراقو نمبر</label><input type="text" name="pages_no" value="<?= e($f['pages_no']) ?>"></div>
         <div><label>د اقدام او مراجعت نمبر</label><input type="text" name="action_no" value="<?= e($f['action_no']) ?>"></div>

@@ -17,8 +17,8 @@ $incomingToday = db()->prepare('SELECT COUNT(*) c FROM incoming_letters WHERE DA
 $incomingToday->execute(['d' => $today]);
 $incomingToday = $incomingToday->fetch()['c'];
 
-$recentOutgoing = db()->query('SELECT id, serial_no, sent_to, subject,dossier_no, letter_date FROM outgoing_letters ORDER BY id DESC LIMIT 6')->fetchAll();
-$recentIncoming = db()->query('SELECT id, serial_no, sent_from, subject,dossier_no, letter_date FROM incoming_letters ORDER BY id DESC LIMIT 6')->fetchAll();
+$recentOutgoing = db()->query('SELECT o.id, o.serial_no, o.subject, o.dossier_no, o.letter_date, sent_dep.name AS sent_to_department FROM outgoing_letters o LEFT JOIN departments sent_dep ON sent_dep.id = o.sent_to_dep_id ORDER BY o.id DESC LIMIT 6')->fetchAll();
+$recentIncoming = db()->query('SELECT i.id, i.serial_no, i.subject, i.dossier_no, i.letter_date, sent_dep.name AS sent_to_department, origin_dep.name AS origin_department FROM incoming_letters i LEFT JOIN departments sent_dep ON sent_dep.id = i.sent_to_dep_id LEFT JOIN departments origin_dep ON origin_dep.id = i.origin_dep_id ORDER BY i.id DESC LIMIT 6')->fetchAll();
 
 require __DIR__ . '/includes/header.php';
 ?>
@@ -91,7 +91,7 @@ require __DIR__ . '/includes/header.php';
             <?php foreach ($recentIncoming as $row): ?>
                 <tr onclick="location.href='incoming/view.php?id=<?= (int)$row['id'] ?>'" style="cursor:pointer">
                     <td><?= e($row['serial_no']) ?></td>
-                    <td><?= e($row['sent_from']) ?></td>
+                    <td><?= e($row['sent_to_department'] ?? '—') ?></td>
                     <td class="subject-cell"><?= e(mb_strimwidth($row['subject'] ?? '', 0, 60, '…')) ?></td>
                     <td><?= e($row['dossier_no']) ?></td>
                     <td><?= e($row['letter_date']) ?></td>
@@ -116,7 +116,7 @@ require __DIR__ . '/includes/header.php';
             <?php foreach ($recentOutgoing as $row): ?>
                 <tr onclick="location.href='outgoing/view.php?id=<?= (int)$row['id'] ?>'" style="cursor:pointer">
                     <td><?= e($row['serial_no']) ?></td>
-                    <td><?= e($row['sent_to']) ?></td>
+                    <td><?= e($row['sent_to_department'] ?? '—') ?></td>
                     <td class="subject-cell"><?= e(mb_strimwidth($row['subject'] ?? '', 0, 60, '…')) ?></td>
                     <td><?= e($row['dossier_no']) ?></td>
                     <td><?= e($row['letter_date']) ?></td>

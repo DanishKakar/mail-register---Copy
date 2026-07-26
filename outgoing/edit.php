@@ -9,9 +9,33 @@ if ($currentUser['role'] === 'viewer') {
 
 $id = (int)($_GET['id'] ?? 0);
 
-$stmt = db()->prepare("SELECT * FROM outgoing_letters WHERE id = :id LIMIT 1");
-$stmt->execute(['id' => $id]);
+$stmt = db()->prepare("
+    SELECT 
+        outgoing_letters.*,
+
+        sent.name AS sent_to_name,
+
+        ref.name AS reference_name
+
+    FROM outgoing_letters
+
+    LEFT JOIN departments sent
+        ON sent.id = outgoing_letters.sent_to_dep_id
+
+    LEFT JOIN departments ref
+        ON ref.id = outgoing_letters.reference_dep_id
+
+    WHERE outgoing_letters.id = :id
+
+    LIMIT 1
+");
+
+$stmt->execute([
+    'id' => $id
+]);
+
 $record = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
 if (!$record) {
     flash_set('error', 'ریکارډ ونه موندل شو.');
@@ -21,6 +45,12 @@ if (!$record) {
 $activePage = 'outgoing';
 $pageTitle  = 'د صادره سمون - ' . APP_NAME;
 $errors = [];
+
+// select departments for the dropdown
+$departments = db()
+->query("SELECT id,name FROM departments ORDER BY name")
+->fetchAll(PDO::FETCH_ASSOC);
+
 
 $boolFields = [
     'records_signature',
@@ -37,13 +67,17 @@ $textFields = [
     'dossier_no',
     'issue_date',
     'letter_date',
-    'sent_to',
-    'reference_no',
     'subject',
     'distribution_notes',
     'remarks',
     'records_attachment_count',
     'exec_attachment_count'
+];
+
+// ADD THESE
+$selectFields = [
+    'sent_to_dep_id',
+    'reference_dep_id'
 ];
 
 $f = $record;
@@ -59,8 +93,6 @@ $defaults = [
     'dossier_no' => '',
     'issue_date' => '',
     'letter_date' => '',
-    'sent_to' => '',
-    'reference_no' => '',
     'subject' => '',
     'distribution_notes' => '',
     'remarks' => '',
@@ -72,6 +104,9 @@ $defaults = [
     'exec_attachment' => 0,
     'exec_attachment_count' => '',
     'exec_original' => 0,
+    'sent_to_dep_id' => null,
+    'reference_dep_id' => null,
+
 ];
 
 $f = array_merge($defaults, $f);
@@ -84,25 +119,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $f[$field] = trim($_POST[$field] ?? '');
     }
 
+
+    // Department IDs
+    $f['sent_to_dep_id'] = !empty($_POST['sent_to_dep_id'])
+        ? (int)$_POST['sent_to_dep_id']
+        : null;
+
+    $f['reference_dep_id'] = !empty($_POST['reference_dep_id'])
+        ? (int)$_POST['reference_dep_id']
+        : null;
+
+
     foreach ($boolFields as $field) {
         $f[$field] = isset($_POST[$field]) ? 1 : 0;
     }
+
 
     if ($f['serial_no'] === '') {
         $errors[] = 'د مسلسل نمبر ډکول لازمي دي.';
     }
 
+
     if (!$errors) {
 
         $stmt = db()->prepare("
             UPDATE outgoing_letters SET
+
                 serial_no = :serial_no,
                 receipts_no = :receipts_no,
                 dossier_no = :dossier_no,
+
                 issue_date = :issue_date,
                 letter_date = :letter_date,
-                sent_to = :sent_to,
-                reference_no = :reference_no,
+
+                sent_to_dep_id = :sent_to_dep_id,
+                reference_dep_id = :reference_dep_id,
+
                 subject = :subject,
 
                 records_signature = :records_signature,
@@ -121,40 +173,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE id = :id
         ");
 
+
         $stmt->execute([
+
             'serial_no' => $f['serial_no'],
             'receipts_no' => $f['receipts_no'],
             'dossier_no' => $f['dossier_no'],
+
             'issue_date' => $f['issue_date'],
             'letter_date' => $f['letter_date'],
-            'sent_to' => $f['sent_to'],
-            'reference_no' => $f['reference_no'],
+
+
+            'sent_to_dep_id' => $f['sent_to_dep_id'],
+            'reference_dep_id' => $f['reference_dep_id'],
+
+
             'subject' => $f['subject'],
+
 
             'records_signature' => $f['records_signature'],
             'records_attachment' => $f['records_attachment'],
+
             'records_attachment_count' =>
                 $f['records_attachment_count'] !== ''
-                    ? (int)$f['records_attachment_count']
-                    : null,
+                ? (int)$f['records_attachment_count']
+                : null,
+
             'records_original' => $f['records_original'],
+
 
             'exec_signature' => $f['exec_signature'],
             'exec_attachment' => $f['exec_attachment'],
+
             'exec_attachment_count' =>
                 $f['exec_attachment_count'] !== ''
-                    ? (int)$f['exec_attachment_count']
-                    : null,
+                ? (int)$f['exec_attachment_count']
+                : null,
+
             'exec_original' => $f['exec_original'],
+
 
             'distribution_notes' => $f['distribution_notes'],
             'remarks' => $f['remarks'],
 
-            'id' => $id,
+
+            'id' => $id
+
         ]);
+
 
         flash_set('success', 'بدلونونه خوندي شول.');
         redirect("view.php?id={$id}");
+
     }
 }
 
@@ -205,12 +275,42 @@ require __DIR__ . '/../includes/header.php';
 
         <div>
             <label>مرسل الیه</label>
-            <input type="text" name="sent_to" value="<?= e($f['sent_to']) ?>">
+            <select name="sent_to_dep_id" class="form-control searchable-select">
+
+                <option value="">
+                -- انتخاب ریاست --
+                </option>
+
+                <?php foreach($departments as $dep): ?>
+                    <option value="<?= (int)$dep['id'] ?>"
+                        <?= ((int)$dep['id'] === (int)($f['sent_to_dep_id'] ?? 0)) ? 'selected' : '' ?>>
+                        <?= e($dep['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+
+            </select>
+
         </div>
 
         <div>
             <label>مرجع</label>
-            <input type="text" name="reference_no" value="<?= e($f['reference_no']) ?>">
+            <select name="reference_dep_id" class="form-control searchable-select">
+
+                <option value="">
+                -- انتخاب ریاست --
+                </option>
+
+
+                <?php foreach($departments as $dep): ?>
+                    <option value="<?= (int)$dep['id'] ?>"
+                        <?= ((int)$dep['id'] === (int)($f['reference_dep_id'] ?? 0)) ? 'selected' : '' ?>>
+                        <?= e($dep['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+
+
+                </select>
+
         </div>
     </div>
 

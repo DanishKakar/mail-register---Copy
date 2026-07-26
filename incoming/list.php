@@ -15,28 +15,28 @@ $where  = [];
 $params = [];
 
 if ($q !== '') {
-    $where[] = '(serial_no LIKE :q OR sent_from LIKE :q2 OR subject LIKE :q3 OR incoming_no LIKE :q4 OR origin LIKE :q5)';
-    $params['q'] = $params['q2'] = $params['q3'] = $params['q4'] = $params['q5'] = "%$q%";
+    $where[] = '(incoming_letters.serial_no LIKE :q OR incoming_letters.subject LIKE :q2 OR incoming_letters.incoming_no LIKE :q3 OR incoming_letters.action_no LIKE :q4 OR incoming_letters.dossier_no LIKE :q5 OR sent_dep.name LIKE :q6 OR origin_dep.name LIKE :q7)';
+    $params['q'] = $params['q2'] = $params['q3'] = $params['q4'] = $params['q5'] = $params['q6'] = $params['q7'] = "%$q%";
 }
-if ($from !== '') { $where[] = 'letter_date >= :from'; $params['from'] = $from; }
-if ($to !== '')   { $where[] = 'letter_date <= :to';   $params['to']   = $to; }
+if ($from !== '') { $where[] = 'incoming_letters.letter_date >= :from'; $params['from'] = $from; }
+if ($to !== '')   { $where[] = 'incoming_letters.letter_date <= :to';   $params['to']   = $to; }
 
 $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
-$countStmt = db()->prepare("SELECT COUNT(*) c FROM incoming_letters $whereSql");
+$countStmt = db()->prepare("SELECT COUNT(*) c FROM incoming_letters LEFT JOIN departments AS sent_dep ON sent_dep.id = incoming_letters.sent_to_dep_id LEFT JOIN departments AS origin_dep ON origin_dep.id = incoming_letters.origin_dep_id $whereSql");
 $countStmt->execute($params);
 $total = (int)$countStmt->fetch()['c'];
 $totalPages = max(1, (int)ceil($total / $perPage));
 $page = min($page, $totalPages);
 $offset = ($page - 1) * $perPage;
 
-$sql = "SELECT * FROM incoming_letters $whereSql ORDER BY id DESC LIMIT :lim OFFSET :off";
+$sql = "SELECT incoming_letters.*, sent_dep.name AS sent_to_department, origin_dep.name AS origin_department FROM incoming_letters LEFT JOIN departments AS sent_dep ON sent_dep.id = incoming_letters.sent_to_dep_id LEFT JOIN departments AS origin_dep ON origin_dep.id = incoming_letters.origin_dep_id $whereSql ORDER BY incoming_letters.id DESC LIMIT :lim OFFSET :off";
 $stmt = db()->prepare($sql);
 foreach ($params as $k => $v) { $stmt->bindValue($k, $v); }
 $stmt->bindValue('lim', $perPage, PDO::PARAM_INT);
 $stmt->bindValue('off', $offset, PDO::PARAM_INT);
 $stmt->execute();
-$rows = $stmt->fetchAll();
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 require __DIR__ . '/../includes/header.php';
 ?>
@@ -51,7 +51,7 @@ require __DIR__ . '/../includes/header.php';
 
 <form method="get" class="card filter-bar">
     <div class="field">
-        <label>لټون (سریال، لیږونکی، موضوع، وارده نمبر، مبداء)</label>
+        <label>لټون (سریال، ریاست، موضوع، وارده نمبر، مبداء)</label>
         <input type="text" name="q" value="<?= e($q) ?>" placeholder="لټون...">
     </div>
     <div class="field">
@@ -79,7 +79,7 @@ require __DIR__ . '/../includes/header.php';
             </thead>
             <tbody>
             <?php if (!$rows): ?>
-                <tr><td colspan="10" class="empty-state">هېڅ ریکارډ ونه موندل شو</td></tr>
+                <tr><td colspan="12" class="empty-state">هېڅ ریکارډ ونه موندل شو</td></tr>
             <?php endif; ?>
             <?php foreach ($rows as $row): ?>
                 <tr>
@@ -88,8 +88,8 @@ require __DIR__ . '/../includes/header.php';
                     <td><?= e($row['action_no']) ?></td>
                     <td><?= e($row['letter_date']) ?></td>
                     <td><?= e($row['incoming_no']) ?></td>
-                    <td><?= e($row['sent_from']) ?></td>
-                    <td><?= e($row['origin']) ?></td>
+                    <td><?= e($row['sent_to_department'] ?? '—') ?></td>
+                    <td><?= e($row['origin_department'] ?? '—') ?></td>
                     <td class="subject-cell"><?= e(mb_strimwidth($row['subject'] ?? '', 0, 60, '…')) ?></td>
                     <td><?= e($row['dossier_no']) ?></td>
                     <td><?= e((string)$row['doc_count']) ?></td>

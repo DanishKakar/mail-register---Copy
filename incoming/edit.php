@@ -52,9 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $f['sent_from'] = $sentToName;
-    $f['origin'] = $originName;
-
     if ($f['serial_no'] === '') {
         $errors[] = 'د مسلسل نمبر ډکول لازمي دي.';
     }
@@ -64,14 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'UPDATE incoming_letters SET
              serial_no = :serial_no, incoming_date = :incoming_date, letter_date = :letter_date,
              incoming_no = :incoming_no, dossier_no = :dossier_no, sent_to_dep_id = :sent_to_dep_id, origin_dep_id = :origin_dep_id,
-             sent_from = :sent_from, origin = :origin, subject = :subject,
+             subject = :subject,
              doc_count = :doc_count, pages_no = :pages_no, action_no = :action_no, remarks = :remarks
              WHERE id = :id'
         );
         $stmt->execute([
             'serial_no' => $f['serial_no'], 'incoming_date' => $f['incoming_date'], 'letter_date' => $f['letter_date'],
             'incoming_no' => $f['incoming_no'], 'dossier_no' => $f['dossier_no'], 'sent_to_dep_id' => $f['sent_to_dep_id'], 'origin_dep_id' => $f['origin_dep_id'],
-            'sent_from' => $f['sent_from'], 'origin' => $f['origin'],
             'subject' => $f['subject'], 'doc_count' => $f['doc_count'] !== '' ? (int)$f['doc_count'] : null,
             'pages_no' => $f['pages_no'], 'action_no' => $f['action_no'], 'remarks' => $f['remarks'],
             'id' => $id,

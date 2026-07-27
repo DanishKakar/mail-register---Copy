@@ -20,7 +20,7 @@ date_default_timezone_set('Asia/Kabul');
 
 require_once __DIR__ . '/db.php';
 
-define('APP_NAME', 'د صادره او وارده مکتوبونو ثبت سیستم');
+define('APP_NAME', 'د IT آمریت د صادره او وارده مکتوبونو ثبت سیستم');
 define('BASE_URL', '/'); // change if the app lives in a sub-folder
 
 // ---- Small helpers ------------------------------------------------------

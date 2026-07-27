@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
 
 :root {
     --primary: #0f6e5c;
@@ -21,6 +22,52 @@
 * {
     box-sizing: border-box;
 }
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    padding: 12px 40px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    direction: rtl;
+}
+
+/* Menu links */
+.navbar a {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 12px 18px;
+    transition: 0.3s;
+    border-radius: 8px;
+}
+
+.navbar a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffd166;
+}
+
+/* Active page */
+.navbar a.active {
+    background-color: #ffd166;
+    color: #1e3c72;
+}
+
+/* Dropdown button */
+.dropdown-btn {
+    color: white;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+/* Database icon */
+.navbar i,
+.navbar svg {
+    color: #ffd166;
+    font-size: 25px;
+}
+
 
 body {
     margin: 0;
@@ -135,11 +182,52 @@ a:hover {
     font-size: 1.5rem;
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 180px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown-content a:hover,
+.dropdown-content .active {
+    background-color: #eee;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
 /* ---------------- Dashboard stat cards ---------------- */
+
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 18px;
+    width: 100%;
     margin-bottom: 24px;
 }
 
@@ -149,7 +237,9 @@ a:hover {
     padding: 20px;
     border-inline-start: 5px solid var(--primary);
     box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+    text-align: center;
 }
+
 
 .stat-card.accent {
     border-inline-start-color: var(--accent);

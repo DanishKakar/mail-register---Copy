@@ -98,18 +98,18 @@ require __DIR__ . '/../includes/header.php';
         <div><label>نیټه (د مکتوب)</label><input type="text" name="letter_date" value="<?= e($f['letter_date']) ?>" placeholder="1445/1/1"></div>
         <div><label>د وارده مکتوب نمبر</label><input type="text" name="incoming_no" value="<?= e($f['incoming_no']) ?>"></div>
         <div>
-            <label>مرسله الیه (ریاست)</label>
+            <label>مرسله الیه (اداره)</label>
             <select name="sent_to_dep_id" class="form-control searchable-select">
-                <option value="">-- انتخاب ریاست --</option>
+                <option value="">-- انتخاب اداره --</option>
                 <?php foreach ($departments as $dep): ?>
                     <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['sent_to_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
         <div>
-            <label>مبداء (ریاست)</label>
+            <label>مبداء (اداره)</label>
             <select name="origin_dep_id" class="form-control searchable-select">
-                <option value="">-- انتخاب ریاست --</option>
+                <option value="">-- انتخاب اداره --</option>
                 <?php foreach ($departments as $dep): ?>
                     <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['origin_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
                 <?php endforeach; ?>

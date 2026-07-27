@@ -21,8 +21,23 @@ $activePage = $activePage ?? '';
     <div class="topbar-brand">📖 <?= e(APP_NAME) ?></div>
     <nav class="topbar-nav">
         <a href="<?= BASE_URL ?>index.php" class="<?= $activePage === 'dashboard' ? 'active' : '' ?>">کورپاڼه</a>
-        <a href="<?= BASE_URL ?>outgoing/list.php" class="<?= $activePage === 'outgoing' ? 'active' : '' ?>">صادره مکتوبونه</a>
-        <a href="<?= BASE_URL ?>incoming/list.php" class="<?= $activePage === 'incoming' ? 'active' : '' ?>">وارده مکتوبونه</a>
+        <div class="dropdown">
+            <button class="dropdown-btn">مکتوبونه ▾</button>
+
+            <div class="dropdown-content">
+                <a href="<?= BASE_URL ?>outgoing/list.php" 
+                class="<?= $activePage === 'outgoing' ? 'active' : '' ?>">
+                    صادره مکتوبونه
+                </a>
+
+                <a href="<?= BASE_URL ?>incoming/list.php" 
+                class="<?= $activePage === 'incoming' ? 'active' : '' ?>">
+                    وارده مکتوبونه
+                </a>
+            </div>
+        </div>
+
+        <a href="<?= BASE_URL ?>receipts/list.php" class="<?= $activePage === 'receipts' ? 'active' : '' ?>"> رسیدات</a>
         <a href="<?= BASE_URL ?>departments/list.php" class="<?= $activePage === 'departments' ? 'active' : '' ?>">ادارات</a>
         <?php if ($currentUser['role'] === 'admin'): ?>
             <a href="<?= BASE_URL ?>users.php" class="<?= $activePage === 'users' ? 'active' : '' ?>">کاروونکي</a>

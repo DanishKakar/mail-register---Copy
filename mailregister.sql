@@ -11,10 +11,16 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+-- Disable foreign key checks while creating tables to avoid order issues
+SET FOREIGN_KEY_CHECKS = 0;
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+
+-- Re-enable foreign key checks after all tables and constraints are created
+SET FOREIGN_KEY_CHECKS = 1;
 /*!40101 SET NAMES utf8mb4 */;
 
 --
@@ -23,8 +29,6 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `departments`
 --
 
 CREATE TABLE `departments` (
@@ -38,24 +42,48 @@ CREATE TABLE `departments` (
 -- Dumping data for table `departments`
 --
 
-INSERT INTO `departments` (`id`, `name`, `description`, `created_at`) VALUES
-(1, 'د دیني جامعاتو او تخصصاتو عمومی ریاست', 'د دیني جامعاتو او تخصصاتو عمومی ریاست', '2026-07-26 02:37:26'),
-(3, 'ډیټابیس امریت', 'د دیني جامعاتو او تخصصاتو عمومی ریاست', '2026-07-26 02:59:35'),
 (4, 'IT ریاست', 'د لوړو زده کړو وزارت', '2026-07-26 03:00:13'),
 (5, 'داسنادو دویش او سوابقو د تنظیم ریاست', 'د دیني جامعاتو اوو تخصصاتو عمومی ریاست', '2026-07-26 04:16:46'),
 (6, 'د معلوماتی ټکنالوژی آمریت', 'د دیني جامعاتو اوو تخصصاتو عمومی ریاست', '2026-07-26 04:17:15'),
 (7, 'د اسنادو ارزونی او معادلت ریاست', 'د دیني جامعاتو اوو تخصصاتو عمومی ریاست', '2026-07-26 04:18:26'),
 (8, 'د دینی جامعاتو د ثبت او ایحاد ریاست', 'د دیني جامعاتو اوو تخصصاتو عمومی ریاست', '2026-07-26 04:19:01'),
 (9, 'د نشراتو او عامه اړیکو ریاست', 'د لوړو زده کړو وزارت', '2026-07-26 04:28:44'),
-(10, 'د پوهنی وزارت', 'امارت اسلامی افغانستان', '2026-07-26 04:29:10'),
-(11, 'ریاست منابع بشری', 'د لوړو زده کړو وزارت', '2026-07-26 04:29:30'),
-(12, 'ریاست مالی', 'د لوړو زده کړو وزارت', '2026-07-26 04:37:32'),
-(13, 'معینیت مالی و اداری', 'د لوړو زده کړو وزارت', '2026-07-26 04:37:58'),
-(14, 'دعوت او ارشاد ریاست', 'د لوړو زده کړو وزارت', '2026-07-26 04:38:14'),
-(15, 'ریاست عمومی آمریت دفتر', 'د دیني جامعاتو اوو تخصصاتو عمومی ریاست', '2026-07-26 04:39:19'),
-(16, 'ابراهیم النخعی جامعه', 'جامعه', '2026-07-26 04:39:45'),
+
 (17, 'عمومی اجرایه', 'د دیني جامعاتو اوو تخصصاتو عمومی ریاست', '2026-07-26 04:41:09'),
 (18, 'دمصوبو، حکمونو او فرمانونو عمومی مدیریت', 'د لوړو زده کړو وزارت', '2026-07-26 04:44:33');
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `full_name` varchar(150) NOT NULL,
+  `role` enum('admin','editor','viewer') NOT NULL DEFAULT 'editor',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `last_login_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password_hash`, `full_name`, `role`, `is_active`, `last_login_at`, `created_at`) VALUES
+(1, 'admin', '$2y$10$VuasIjylRsepeP4vAjfn8eElYe7LjWCq5l5qZ8/QC.Eaj/q20Zoua', 'سیسټم مدیر', 'admin', 1, '2026-07-26 11:49:26', '2026-07-25 13:14:53'),
+(2, 'user', '$2y$10$rNQfhqgQNwCy05g1noOQlObOiI.qkAStH/oVyFAujrpzIcLfj0aKC', 'Danish', 'editor', 1, '2026-07-26 12:10:39', '2026-07-26 11:50:31'),
+(3, 'Viewer', '$2y$10$pHgVG1q4NMp5fk2fRBdlAuEDdy8fji5d41gfqMXaYv.qIMbZEk3b.', 'Wiewer', 'viewer', 1, NULL, '2026-07-26 12:09:51');
+
+-- Indexes for table `users`
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+-- AUTO_INCREMENT for table `users`
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 -- --------------------------------------------------------
 
@@ -180,32 +208,6 @@ INSERT INTO `outgoing_letters` (`id`, `serial_no`, `receipts_no`, `dossier_no`, 
 (5, '14', '8', '1', '1448/01/27', '1448/01/27', 17, 6, 'د معلوماتی ټکنالوژۍ امریت د لوحی په اړه!', 1, 0, NULL, NULL, 1, 1, 0, NULL, NULL, 1, 'مکتوب تسلیم شوی', '', 1, '2026-07-26 09:48:52', '2026-07-26 09:48:52'),
 (6, '21', '10,11,12,13', '2', '1448/02/10', '1448/02/10', 1, 6, 'د صادرې او واردې سیستم د ټرینینګ په اړه!', 1, 0, NULL, NULL, 1, 1, 0, NULL, NULL, 1, 'کاپي:\r\nد تحصیلي اسنادو دارزونې او برابرۍ محترم ریاست ته!\r\nد اسنادو د ویش او سوابقو د تنظیم محترم ریاست ته!\r\nد ثبت او ایجاد محترم ریاست ته!', '', 1, '2026-07-26 09:52:39', '2026-07-26 10:27:57'),
 (7, '22', '', '1', '1448/02/11', '1448/02/11', 6, 1, 'د معلوماتی ټکنالوژی امریت کارکوونکو لپاره د اړینو توکو د ضرورت اړوند!', 1, 0, NULL, NULL, 1, 1, 0, NULL, NULL, 1, '', '', 1, '2026-07-26 10:33:05', '2026-07-26 10:33:05');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
-  `full_name` varchar(150) NOT NULL,
-  `role` enum('admin','editor','viewer') NOT NULL DEFAULT 'editor',
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `last_login_at` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password_hash`, `full_name`, `role`, `is_active`, `last_login_at`, `created_at`) VALUES
-(1, 'admin', '$2y$10$VuasIjylRsepeP4vAjfn8eElYe7LjWCq5l5qZ8/QC.Eaj/q20Zoua', 'سیسټم مدیر', 'admin', 1, '2026-07-26 11:49:26', '2026-07-25 13:14:53'),
-(2, 'user', '$2y$10$rNQfhqgQNwCy05g1noOQlObOiI.qkAStH/oVyFAujrpzIcLfj0aKC', 'Danish', 'editor', 1, '2026-07-26 12:10:39', '2026-07-26 11:50:31'),
-(3, 'Viewer', '$2y$10$pHgVG1q4NMp5fk2fRBdlAuEDdy8fji5d41gfqMXaYv.qIMbZEk3b.', 'Wiewer', 'viewer', 1, NULL, '2026-07-26 12:09:51');
 
 --
 -- Indexes for dumped tables

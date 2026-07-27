@@ -11,6 +11,13 @@ const DB_NAME = 'mailregister_db';
 const DB_USER = 'root';
 const DB_PASS = '';
 
+// const DB_HOST = 'sql200.ezyro.com';
+// const DB_NAME = 'ezyro_42501887_mailregister';
+// const DB_USER = 'ezyro_42501887';
+// const DB_PASS = 'Danish@123';
+
+date_default_timezone_set('Asia/Kabul');
+
 function db(): PDO
 {
     static $pdo = null;
@@ -25,6 +32,8 @@ function db(): PDO
 
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+               // Set MySQL session timezone to Afghanistan (UTC+04:30)
+            $pdo->exec("SET time_zone = '+04:30'");
         } catch (PDOException $e) {
             // Never leak DB credentials/details to the browser.
             error_log('DB connection failed: ' . $e->getMessage());

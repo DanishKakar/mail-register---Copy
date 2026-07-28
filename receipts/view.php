@@ -8,7 +8,7 @@ $stmt->execute(['id' => $id]);
 $r = $stmt->fetch();
 if (!$r) { flash_set('error', 'ریکارډ ونه موندل شو.'); redirect('list.php'); }
 
-$activePage = 'Receipt';
+$activePage = 'receipts';
 $pageTitle  = 'د رسید کتنه - ' . APP_NAME;
 require __DIR__ . '/../includes/header.php';
 ?>

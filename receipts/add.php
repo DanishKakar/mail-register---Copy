@@ -7,7 +7,7 @@ if ($currentUser['role'] === 'viewer') {
     die('تاسو د ثبت صلاحیت نلرئ.');
 }
 
-$activePage = 'Receipt';
+$activePage = 'receipts';
 $pageTitle  = 'نوی رسیــد ثبت - ' . APP_NAME;
 $errors = [];
 $departments = db()->query('SELECT id, name FROM departments ORDER BY name')->fetchAll(PDO::FETCH_ASSOC);

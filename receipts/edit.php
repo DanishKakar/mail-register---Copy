@@ -13,7 +13,7 @@ $stmt->execute(['id' => $id]);
 $record = $stmt->fetch();
 if (!$record) { flash_set('error', 'ریکارډ ونه موندل شو.'); redirect('list.php'); }
 
-$activePage = 'incoming';
+$activePage = 'receipts';
 $pageTitle  = 'د وارده سمون - ' . APP_NAME;
 $errors = [];
 $departments = db()->query('SELECT id, name FROM departments ORDER BY name')->fetchAll(PDO::FETCH_ASSOC);

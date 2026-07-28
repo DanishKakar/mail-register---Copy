@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
 
 :root {
     --primary: #0f6e5c;
@@ -89,53 +88,109 @@ a:hover {
 }
 
 /* ---------------- Topbar ---------------- */
+/* ===================== HEADER / TOPBAR ===================== */
+
 .topbar {
-    background: var(--primary);
+    background: linear-gradient(135deg, #0f6e5c, #0b5747);
     position: sticky;
     top: 0;
     z-index: 9999;
 
-    color: #fff;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
-    flex-wrap: wrap;
-    gap: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+
+    padding: 12px 25px;
+    min-height: 70px;
+
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
 }
 
 .topbar-brand {
+    font-size: 22px;
     font-weight: 700;
-    font-size: 1.2rem;
+    white-space: nowrap;
+    color: #fff;
 }
+
+/* Navigation */
 
 .topbar-nav {
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    flex: 1;
+    margin: 0 30px;
 }
 
 .topbar-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     color: #fff;
-    padding: 8px 14px;
-    border-radius: 6px;
-    opacity: .9;
+    text-decoration: none;
+
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: all .25s ease;
 }
 
-.topbar-nav a:hover,
-.topbar-nav a.active {
+.topbar-nav a:hover {
     background: rgba(255, 255, 255, .18);
-    opacity: 1;
+    color: #ffd166;
     text-decoration: none;
 }
+
+.topbar-nav a.active {
+    background: #ffd166;
+    color: #0b5747;
+}
+
+/* Backup Icon */
+
+.topbar-nav a i {
+    font-size: 20px;
+}
+
+/* User Section */
 
 .topbar-user {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: .9rem;
+    gap: 15px;
+    white-space: nowrap;
 }
+
+.topbar-user span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Logout Button */
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .6);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: .25s;
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, .18);
+    text-decoration: none;
+}
+
 
 /* ---------------- Layout ---------------- */
 .page-content {
@@ -640,17 +695,123 @@ table.data-table td.subject-cell {
     margin-top: 18px;
 }
 
-@media (max-width: 700px) {
+/* ---------------- Hamburger toggle ---------------- */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 34px;
+    height: 34px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10000;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: #fff;
+    border-radius: 3px;
+    transition: transform .25s ease, opacity .25s ease;
+}
+
+/* Turn into an "X" when open */
+.menu-toggle.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Desktop: menu items sit inline with the rest of the topbar, unaffected */
+.topbar-menu {
+    display: contents;
+}
+
+/* ---------------- Mobile topbar ---------------- */
+@media (max-width: 992px) {
     .topbar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        gap: 0;
+        position: relative;
+    }
+
+    .topbar-brand {
+        text-align: right;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* Collapsed menu becomes a real block again, hidden until toggled */
+    .topbar-menu {
+        display: none;
         flex-direction: column;
         align-items: stretch;
+        width: 100%;
+        margin-top: 15px;
+        gap: 15px;
+        order: 3;
+    }
+
+    .topbar-menu.open {
+        display: flex;
+        animation: slideDown .2s ease;
     }
 
     .topbar-nav {
-        justify-content: center;
+        flex-direction: column;
+        align-items: stretch;
+        margin: 0;
+        gap: 6px;
+    }
+
+    .topbar-nav a {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 12px 16px;
     }
 
     .topbar-user {
-        justify-content: center;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        border-top: 1px solid rgba(255, 255, 255, .15);
+        padding-top: 12px;
+    }
+
+    .topbar-user span {
+        text-align: center;
+    }
+
+    .btn-outline.btn-sm {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

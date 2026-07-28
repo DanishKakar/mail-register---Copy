@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../includes/auth.php';
 
-$activePage = 'ًReceipts';
+$activePage = 'receipts';
 $pageTitle  = ' رسـیدات - ' . APP_NAME;
 
 $q       = trim($_GET['q'] ?? '');

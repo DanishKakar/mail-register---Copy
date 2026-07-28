@@ -20,7 +20,6 @@ $(document).ready(function(){
 });
 </script>
 
-
 <script src="<?= BASE_URL ?>assets/js/attachment-toggle.js"></script>
 <script>
 

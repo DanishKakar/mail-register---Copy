@@ -93,13 +93,13 @@ require __DIR__ . '/../includes/header.php';
 <form method="post" class="card">
     <?= csrf_field() ?>
     <div class="form-grid">
-        <div><label>مسلسل او مشترک نمبر *</label><input type="text" name="serial_no" value="<?= e($f['serial_no']) ?>" required></div>
-        <div><label>نیټه (د ثبت)</label><input type="text" name="incoming_date" value="<?= e($f['incoming_date']) ?>" placeholder="1445/1/1"></div>
-        <div><label>نیټه (د مکتوب)</label><input type="text" name="letter_date" value="<?= e($f['letter_date']) ?>" placeholder="1445/1/1"></div>
-        <div><label>د وارده مکتوب نمبر</label><input type="text" name="incoming_no" value="<?= e($f['incoming_no']) ?>"></div>
+        <div><label>مسلسل او مشترک نمبر <span style="color:red;">*</span></label><input type="text" name="serial_no" value="<?= e($f['serial_no']) ?>" required></div>
+        <div><label>نیټه (د ثبت) <span style="color:red;">*</span></label><input type="text" name="incoming_date" required value="<?= e($f['incoming_date']) ?>" placeholder="1445/1/1"></div>
+        <div><label>نیټه (د مکتوب) <span style="color:red;">*</span></label><input type="text" name="letter_date" required value="<?= e($f['letter_date']) ?>" placeholder="1445/1/1"></div>
+        <div><label>د وارده مکتوب نمبر <span style="color:red;">*</span></label><input type="text" name="incoming_no" required value="<?= e($f['incoming_no']) ?>"></div>
         <div>
-            <label>مرسله الیه (اداره)</label>
-            <select name="sent_to_dep_id" class="form-control searchable-select">
+            <label>مرسله الیه (اداره) <span style="color:red;">*</span></label>
+            <select name="sent_to_dep_id" required class="form-control searchable-select">
                 <option value="">-- انتخاب اداره --</option>
                 <?php foreach ($departments as $dep): ?>
                     <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['sent_to_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
@@ -107,8 +107,8 @@ require __DIR__ . '/../includes/header.php';
             </select>
         </div>
         <div>
-            <label>مبداء (اداره)</label>
-            <select name="origin_dep_id" class="form-control searchable-select">
+            <label>مبداء (اداره) <span style="color:red;">*</span></label>
+            <select name="origin_dep_id" required class="form-control searchable-select">
                 <option value="">-- انتخاب اداره --</option>
                 <?php foreach ($departments as $dep): ?>
                     <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['origin_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
@@ -121,8 +121,8 @@ require __DIR__ . '/../includes/header.php';
         <div><label>دوسیه نمبر</label><input type="text" name="dossier_no" value="<?= e($f['dossier_no']) ?>"></div>
     </div>
 
-    <label>د مطلب خلاصه (موضوع)</label>
-    <textarea name="subject"><?= e($f['subject']) ?></textarea>
+    <label>د مطلب خلاصه (موضوع) <span style="color:red;">*</span></label>
+    <textarea name="subject" required><?= e($f['subject']) ?></textarea>
 
     <label>ملاحظات</label>
     <textarea name="remarks"><?= e($f['remarks']) ?></textarea>

@@ -249,7 +249,7 @@ require __DIR__ . '/../includes/header.php';
 
     <div class="form-grid">
         <div>
-            <label>مسلسل او مشترک نمبر *</label>
+            <label>مسلسل او مشترک نمبر <span style="color:red;">*</span></label>
             <input type="text" name="serial_no" value="<?= e($f['serial_no']) ?>" required>
         </div>
 
@@ -264,18 +264,18 @@ require __DIR__ . '/../includes/header.php';
         </div>
 
         <div>
-            <label>نیټه (د صدور)</label>
-            <input type="text" name="issue_date" value="<?= e($f['issue_date']) ?>">
+            <label>نیټه (د صدور) <span style="color:red;">*</span></label>
+            <input type="text" name="issue_date" required value="<?= e($f['issue_date']) ?>">
         </div>
 
         <div>
-            <label>نیټه (د مکتوب)</label>
-            <input type="text" name="letter_date" value="<?= e($f['letter_date']) ?>">
+            <label>نیټه (د مکتوب) <span style="color:red;">*</span></label>
+            <input type="text" name="letter_date" required value="<?= e($f['letter_date']) ?>">
         </div>
 
         <div>
-            <label>مرسل الیه</label>
-            <select name="sent_to_dep_id" class="form-control searchable-select">
+            <label>مرسل الیه <span style="color:red;">*</span></label>
+            <select name="sent_to_dep_id" required class="form-control searchable-select">
 
                 <option value="">
                 -- انتخاب ریاست --
@@ -293,8 +293,8 @@ require __DIR__ . '/../includes/header.php';
         </div>
 
         <div>
-            <label>مرجع</label>
-            <select name="reference_dep_id" class="form-control searchable-select">
+            <label>مرجع <span style="color:red;">*</span></label>
+            <select name="reference_dep_id" required class="form-control searchable-select">
 
                 <option value="">
                 -- انتخاب ریاست --
@@ -314,8 +314,8 @@ require __DIR__ . '/../includes/header.php';
         </div>
     </div>
 
-    <label>د مطلب خلاصه (موضوع)</label>
-    <textarea name="subject"><?= e($f['subject']) ?></textarea>
+    <label>د مطلب خلاصه (موضوع) <span style="color:red;">*</span></label>
+    <textarea name="subject" required><?= e($f['subject']) ?></textarea>
 
     <fieldset>
         <legend>د اوراقو د ضبط شعبه</legend>

@@ -15,17 +15,29 @@ $f = [
     'subject' => '', 'distribution_notes' => '', 'remarks' => '',
     'records_signature' => 0, 'records_attachment' => 0, 'records_original' => 0, 'records_attachment_pages' => '',
     'exec_signature' => 0,  'exec_attachment_pages' => '', 'exec_attachment' => 0, 'exec_original' => 0,
-    'sent_to_dep_id' => 0, 'reference_dep_id' => 0
+    'sent_to_dep_id' => '', 'reference_dep_id' => '',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
+
+    $checkboxes = [
+        'records_signature',
+        'records_attachment',
+        'records_original',
+        'exec_signature',
+        'exec_attachment',
+        'exec_original',
+    ];
+
     foreach ($f as $key => $default) {
-        if (is_int($default)) {
+
+        if (in_array($key, $checkboxes)) {
             $f[$key] = isset($_POST[$key]) ? 1 : 0;
         } else {
             $f[$key] = trim($_POST[$key] ?? '');
         }
+
     }
 
     if ($f['serial_no'] === '') {
@@ -40,7 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $f['exec_attachment_pages'] = null;
     }
 
-
+// echo '<pre>';
+// print_r($f);
+// exit;
 
     if (!$errors) {
         $stmt = db()->prepare(
@@ -115,10 +129,12 @@ require __DIR__ . '/../includes/header.php';
             <select name="sent_to_dep_id" class="form-control searchable-select">
 
                 <option value="">
-                -- انتخاب ریاست --
+                -- انتخاب اداره --
                 </option>
-                <?php foreach($departments as $dep): ?>
-                    <option value="<?= $dep['id'] ?>">
+                <?php foreach ($departments as $dep): ?>
+                    <option
+                        value="<?= $dep['id'] ?>"
+                        <?= $f['sent_to_dep_id'] == $dep['id'] ? 'selected' : '' ?>>
                         <?= e($dep['name']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -129,10 +145,12 @@ require __DIR__ . '/../includes/header.php';
             <label>مرجع</label>
             <select name="reference_dep_id" class="form-control searchable-select">
                 <option value="">
-                -- انتخاب ریاست --
+                -- انتخاب اداره --
                 </option>
-                <?php foreach($departments as $dep): ?>
-                    <option value="<?= $dep['id'] ?>">
+                <?php foreach ($departments as $dep): ?>
+                    <option
+                        value="<?= $dep['id'] ?>"
+                        <?= $f['reference_dep_id'] == $dep['id'] ? 'selected' : '' ?>>
                         <?= e($dep['name']) ?>
                     </option>
                 <?php endforeach; ?>

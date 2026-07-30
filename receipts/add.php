@@ -95,15 +95,15 @@ require __DIR__ . '/../includes/header.php';
 <form method="post" class="card">
     <?= csrf_field() ?>
     <div class="form-grid">
-        <div><label>مسلسل نمبر *</label><input type="text" name="serial_no" value="<?= e($f['serial_no']) ?>" required></div>
+        <div><label>مسلسل نمبر <span style="color:red;">*</span></label><input type="text" name="serial_no" value="<?= e($f['serial_no']) ?>" required></div>
         <div><label>آرشیف</label><input type="text" name="archive" value="<?= e($f['archive']) ?>"></div>
         <div><label>شعبه </label><input type="text" name="office" value="<?= e($f['office']) ?>"></div>
-        <div><label>نیټه (د مکتوب)</label><input type="text" name="letter_date" value="<?= e($f['letter_date']) ?>" placeholder="1445/1/1"></div>
-        <div><label>نیټه (د ثبت)</label><input type="text" name="incoming_date" value="<?= e($f['incoming_date']) ?>" placeholder="1445/1/1"></div>
+        <div><label>نیټه (د مکتوب) <span style="color:red;">*</span></label><input type="text" required name="letter_date" value="<?= e($f['letter_date']) ?>" placeholder="1445/1/1"></div>
+        <div><label>نیټه (د ثبت) <span style="color:red;">*</span></label><input type="text" required name="incoming_date" value="<?= e($f['incoming_date']) ?>" placeholder="1445/1/1"></div>
 
         <div>
-            <label>مرسل</label>
-            <select name="origin_dep_id" class="form-control searchable-select">
+            <label>مرسل <span style="color:red;">*</span></label>
+            <select name="origin_dep_id" required class="form-control searchable-select">
                 <option value="">-- انتخاب ریاست --</option>
                 <?php foreach ($departments as $dep): ?>
                     <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['origin_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
@@ -112,8 +112,8 @@ require __DIR__ . '/../includes/header.php';
         </div>
 
         <div>
-            <label>مرسل الیه (اداره)</label>
-            <select name="sent_to_dep_id" class="form-control searchable-select">
+            <label>مرسل الیه (اداره) <span style="color:red;">*</span></label>
+            <select name="sent_to_dep_id" required class="form-control searchable-select">
                 <option value="">-- انتخاب ریاست --</option>
                 <?php foreach ($departments as $dep): ?>
                     <option value="<?= (int)$dep['id'] ?>" <?= ((int)$dep['id'] === (int)($f['sent_to_dep_id'] ?? 0)) ? 'selected' : '' ?>><?= e($dep['name']) ?></option>
